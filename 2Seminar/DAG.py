@@ -55,27 +55,26 @@ print(parents)
 flag_count = [None for _ in range(vert_num)]
 ways_count = [0 for _ in range(vert_num)]
 
-def num_of_ways2(start, end):
-    dfs(start)
-    flag_count[start] = 'f'
-    ways_count[start] = 1
-    if colors[end] == 'w':
-        return 0
-    else:
-        for k in range(vert_num):
-            for j in range(vert_num):
-                c = 0
-                for i in range(vert_num):
-                    if colors[i] != 'w' and (adj_matrix[i][j] == 1) and flag_count[j] != 'f':
-                        if flag_count[i] == 'f':
-                            c += ways_count[i]
-                        else:
-                            if colors[i] != 'g':
-                                c = 0
-                                break
-                if c != 0:
-                    flag_count[j] = 'f'
-                    ways_count[j] = c
-        return ways_count[end]
 
-print(num_of_ways2(0,7))
+def topsort():
+    for v in range(vert_num):
+        if colors[v] == 'w':
+            dfs(v)
+        vert_list = [i for i in range(vert_num)]
+        ans = [x for y,x in sorted(zip(tout, vert_list), key = lambda pair: pair[0], reverse = True)]
+        return ans
+
+ts = topsort()
+print(ts)
+
+def num_of_ways(start, end):
+    ways_count[start] = 1
+    for j in ts:
+        for i in range(vert_num):
+            if adj_matrix[i][j] == 1:
+                ways_count[j] += ways_count[i]
+
+    return ways_count[end]
+
+print(num_of_ways(0,7))
+
